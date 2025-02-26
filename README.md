@@ -1,1 +1,1 @@
-# jeu_mots_crois-s
+# jeu_mots_croisés
