@@ -1,0 +1,36 @@
+version: '3'
+services:
+  php-fpm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        GOODUSER: ubnuntu
+        UID: 1000
+        MAIL: doha.mazlani@etu.univ-orleans.fr
+        NOM: "Doha MAZLANI"
+    container_name: SI
+    volumes:
+    - ./dev:/var/www/html
+    ports:
+    - "5000:8000"
+    environment:
+      PHP_IDE_CONFIG: serverName=wala
+    depends_on:
+      - database
+  database:
+   image: postgres:latest
+   container_name: symfony_postgres
+   restart: always
+   environment:
+     POSTGRES_USER: symfony
+     POSTGRES_PASSWORD: symfony
+     POSTGRES_DB: symfony_db
+   ports:
+     - "5432:5432"
+   volumes:
+     - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+
