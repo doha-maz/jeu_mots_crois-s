@@ -14,10 +14,16 @@ final class HomeController extends AbstractController
         return $this->render('home/index.html.twig');
     }
 
-    #[Route('/game', name: 'game_start')]
+    #[Route('/previous', name: 'game_defintion')]
     public function start(): Response
     {
-        return $this->render('game/start.html.twig');
+        return $this->render('previous/definition.html.twig');
+    }
+
+    #[Route('/previous/next', name: 'game_next')]
+    public function next(): Response
+    {
+        return $this->render('previous/next.html.twig');
     }
 
 }
