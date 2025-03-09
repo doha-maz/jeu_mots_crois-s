@@ -16,9 +16,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
+            justify-content: flex-start;
+            min-height: 100vh;
             margin: 0;
+            overflow-y: auto;
             padding: 20px;
         }
         .container {
@@ -29,6 +30,8 @@
             background: rgba(255, 255, 255, 0.8);
             padding: 20px;
             border-radius: 15px;
+            margin-bottom: 50px;
+            margin-top: 50px;
         }
         video {
             width: 80%;
@@ -73,6 +76,28 @@
         .start-button:hover {
             background-color: #0056b3;
         }
+        .definition-label {
+            text-align: left;
+            width: 100%;
+            margin-top: 20px;
+            margin-bottom: 0;
+            max-width: 400px;
+            font-size: 18px;
+        }
+        .definition-container {
+            text-align: left;
+            width: 90%;
+            max-width: 400px;
+            margin-top: 0;
+            font-size: 18px;
+            line-height: 1.6;
+            word-wrap: break-word;
+            padding: 0;
+        }
+        .definition-container p {
+            white-space: pre-line;
+        }
+
     </style>
 </head>
 <body>
