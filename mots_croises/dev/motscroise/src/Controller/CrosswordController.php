@@ -18,30 +18,30 @@ final class CrosswordController extends AbstractController
     #[Route('/crossword', name: 'app_crossword')]
     public function showGame(MotRepository $motRepository): Response
     {
-        // Récupérer tous les mots
         $mots = $motRepository->findAll();
-
         $grille = [];
-        for ($x = 1; $x <= 13; $x++) {
-            for ($y = 1; $y <= 9; $y++) {
+        for ($x = 1; $x <= 14; $x++) {
+            for ($y = 1; $y <= 14; $y++) {
                 $grille[$x][$y] = [
-                    'numero' => null, // Numéro de la case (si nécessaire)
-                    'contenu' => '',  // Contenu vide par défaut
-                    'mot' => null,    // Mot associé à la case
+                    'contenu' => '',
+                    'mot' => null,
+                    'numero' => null,
                 ];
             }
         }
 
-
         foreach ($mots as $mot) {
-            foreach ($mot->getCases() as $case) {
-                $grille[$case->getPositionX()][$case->getPositionY()]['mot'] = $mot;
-                if ($case->isCasePartage()) {
-                    $grille[$case->getPositionX()][$case->getPositionY()]['numero'] = $mot->getId();
+            $cases = $mot->getCases();
+            foreach ($cases as $case) {
+                $x = $case->getPositionX();
+                $y = $case->getPositionY();
+                $grille[$x][$y]['contenu'] = $case->getContenu();
+                $grille[$x][$y]['mot'] = $mot;
+                if ($case->getNumero()) {
+                    $grille[$x][$y]['numero'] = $case->getNumero();
                 }
             }
         }
-
         return $this->render('crossword/grid.html.twig', [
             'grille' => $grille,
         ]);
@@ -69,7 +69,7 @@ final class CrosswordController extends AbstractController
             $cases = $em->getRepository(CaseM::class)->findBy(['mot' => $mot]);
             $word = $mot->getMot();
             foreach ($cases as $index => $case) {
-                $case->setContenu($word[$index]); // Remplit chaque case avec la lettre correspondante
+                $case->setContenu($word[$index]);
             }
             $em->flush();
         }

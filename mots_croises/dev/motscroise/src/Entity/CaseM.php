@@ -39,6 +39,20 @@ class CaseM
         $this->mots = new ArrayCollection() ;
     }
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $numero = null;
+
+
+    public function getNumero(): ?int
+    {
+        return $this->numero;
+    }
+
+    public function setNumero(?int $numero): self
+    {
+        $this->numero = $numero;
+        return $this;
+    }
 
     public function getId(): ?int
     {

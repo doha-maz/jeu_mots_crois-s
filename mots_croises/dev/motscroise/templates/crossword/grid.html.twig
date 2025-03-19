@@ -116,131 +116,284 @@
             white-space: pre-line;
         }
 
+
         .grille-container {
-            margin: 20px;
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
         table {
             border-collapse: collapse;
+            border-spacing: 5px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
         }
 
         td {
-            width: 40px;
-            height: 40px;
-            border: 1px solid #000;
+            width: 45px;
+            height: 45px;
+            border: 1px solid #007bff;
             text-align: center;
             vertical-align: middle;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
             position: relative;
-        }
-
-        .case-numero {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            font-size: 10px;
-            color: #666;
-        }
-
-        .case-contenu {
-            font-size: 16px;
-        }
-
-        #definition-modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            border-radius: 5px;
+            transition: all 0.2s ease-in-out;
             background: white;
-            padding: 20px;
-            border: 1px solid #000;
-            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
         }
 
-        .hidden {
-            display: none;
+        td:hover {
+            background: #e3f2fd;
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+
+        .case-vide {
+            background: none !important;
+            border: none !important;
+            box-shadow: none !important;
         }
 
         .blur {
             filter: blur(5px);
         }
 
+        .numero-externe {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            font-size: 9px;
+            font-weight: bold;
+            color: #007bff;
+        }
 
+        .definition-display {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            font-size: 16px;
+            color: #333;
+            text-align: left;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media screen and (max-width: 768px) {
+            .container {
+                max-width: 100%;
+                padding: 10px;
+            }
+
+            .grille-container {
+                padding: 10px;
+                overflow-x: auto;
+            }
+
+            td {
+                width: 30px;
+                height: 30px;
+                font-size: 16px;
+            }
+
+            .bubble {
+                font-size: 16px;
+                max-width: 150px;
+                top: -30px;
+            }
+
+            .start-button {
+                font-size: 16px;
+                padding: 10px 20px;
+                max-width: 200px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            body {
+                padding: 10px;
+                overflow-x: hidden;
+            }
+
+            .container {
+                width: 100%;
+                padding: 5px;
+            }
+
+            .grille-container {
+                padding: 10px;
+                overflow-x: auto;
+                max-width: 100%;
+            }
+
+            td {
+                width: 40px;
+                height: 25px;
+                font-size: 16px;
+            }
+
+            .bubble {
+                font-size: 14px;
+                max-width: 100px;
+                padding: 8px;
+                top: -25px;
+                right: 5px;
+            }
+
+            .start-button {
+                font-size: 14px;
+                padding: 10px 15px;
+                max-width: 160px;
+            }
+        }
+
+        .timer {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
     </style>
 </head>
 <body>
-<h1>Grille de Mots Croisés</h1>
+
 <div class="container">
-<div class="grille-container">
-    <table>
-        {% for x in 1..13 %}
-            <tr>
-                {% for y in 1..9 %}
-                    {% if grille[x][y].numero or grille[x][y].mot %}
-                    <td class="case"
-                        data-x="{{ x }}"
-                        data-y="{{ y }}"
-                        data-mot-id="{{ grille[x][y].mot ? grille[x][y].mot.id : '' }}"
-                        onclick="openDefinition({{ grille[x][y].mot ? grille[x][y].mot.id : 'null' }})">
-                        {% if grille[x][y].numero %}
-                            <div class="case-numero">{{ grille[x][y].numero }}</div>
+    <div class="timer">
+        Temps restant : <span id="time">05:00</span>
+    </div><div id="definition-display" class="definition-display hidden">
+        <p id="definition-text"></p>
+    </div>
+    <div class="grille-container">
+        <table>
+            {% for x in 1..14 %}
+                <tr>
+                    {% for y in 1..14 %}
+                        {% if grille[x][y].contenu %}
+                            <td class="case"
+                                data-x="{{ x }}"
+                                data-y="{{ y }}"
+                                data-mot-id="{{ grille[x][y].mot.id }}"
+                                onclick="openDefinition({{ grille[x][y].mot.id }}, '{{ grille[x][y].mot.definition }}')">
+                                {% if grille[x][y].numero %}
+                                    <div class="numero-externe">{{ grille[x][y].numero }}</div>
+                                {% endif %}
+                                <div class="case-contenu"></div> <!-- Afficher la lettre -->
+                            </td>
+                        {% else %}
+                            <td class="case-vide"></td> <!-- Case vide -->
                         {% endif %}
-                        <div class="case-contenu">{{ grille[x][y].contenu }}</div>
-                    </td>
-                    {% endif %}
-                {% endfor %}
-            </tr>
-        {% endfor %}
-    </table>
-</div>
-</div>
-<!-- Modale pour afficher la définition et saisir la réponse -->
-<div id="definition-modal" class="hidden">
-    <p id="definition-text"></p>
-    <input type="text" id="answer" maxlength="10">
-    <button onclick="checkAnswer()">Valider</button>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
 </div>
 
 <script>
     let currentMotId = null;
+    let timer;
+    let timeLeft = 300; // 5 minutes en secondes
 
-    function openDefinition(motId) {
+    function startTimer() {
+        const timeElement = document.getElementById('time');
+
+        timer = setInterval(() => {
+            timeLeft--;
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                gameOver();
+            }
+
+            // Mettre à jour l'affichage du temps
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timeElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }, 1000); // Mettre à jour toutes les secondes
+    }
+
+    function gameOver() {
+        // Afficher le message "Game Over"
+        const gameOverModal = document.createElement('div');
+        gameOverModal.style.position = 'fixed';
+        gameOverModal.style.top = '50%';
+        gameOverModal.style.left = '50%';
+        gameOverModal.style.transform = 'translate(-50%, -50%)';
+        gameOverModal.style.backgroundColor = 'white';
+        gameOverModal.style.padding = '20px';
+        gameOverModal.style.border = '1px solid #000';
+        gameOverModal.style.zIndex = '1000';
+        gameOverModal.style.textAlign = 'center';
+
+        gameOverModal.innerHTML = `
+            <h2>Game Over</h2>
+            <p>Le temps est écoulé !</p>
+            <button onclick="restartGame()">Recommencer</button>
+        `;
+
+        document.body.appendChild(gameOverModal);
+    }
+
+    function restartGame() {
+        // Recharger la page pour recommencer
+        window.location.reload();
+    }
+
+    function openDefinition(motId, definition) {
         if (!motId) return;
 
         currentMotId = motId;
 
-        fetch(`/definition/${motId}`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('definition-text').textContent = data.definition;
-                document.getElementById('definition-modal').classList.remove('hidden');
-                document.querySelector('.grille-container').classList.add('blur');
-            });
+        // Mettre en gras toutes les cases partagées avec le même mot
+        const cases = document.querySelectorAll(`.case[data-mot-id="${motId}"]`);
+        cases.forEach(cell => {
+            cell.style.fontWeight = 'bold';
+        });
+
+        // Afficher la définition du mot
+        const definitionDisplay = document.getElementById('definition-display');
+        const definitionText = document.getElementById('definition-text');
+        definitionText.textContent = definition;
+        definitionDisplay.classList.remove('hidden');
+
+        // Flouter l'arrière-plan
+        document.querySelector('.grille-container').classList.add('blur');
     }
 
-    function checkAnswer() {
-        const answer = document.getElementById('answer').value.toUpperCase();
+    // Réinitialiser la sélection lorsque l'utilisateur clique en dehors des cases
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('.case')) {
+            resetSelection();
+        }
+    });
 
-        fetch(`/validate/${currentMotId}`, {
-            method: 'POST',
-            body: JSON.stringify({ answer: answer }),
-            headers: { 'Content-Type': 'application/json' }
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.correct) {
-                    alert('Bravo ! Vous avez trouvé le mot.');
-                    location.reload();
-                } else {
-                    alert('Mauvaise réponse. Réessayez.');
-                    document.querySelectorAll(`.case[data-mot-id="${currentMotId}"] .case-contenu`).forEach(cell => {
-                        cell.textContent = '';
-                    });
-                }
+    function resetSelection() {
+        // Retirer le gras de toutes les cases
+        const cases = document.querySelectorAll('.case');
+        cases.forEach(cell => {
+            cell.style.fontWeight = 'normal';
+        });
 
-                document.getElementById('definition-modal').classList.add('hidden');
-                document.querySelector('.grille-container').classList.remove('blur');
-            });
+        // Masquer la définition
+        const definitionDisplay = document.getElementById('definition-display');
+        definitionDisplay.classList.add('hidden');
+
+        // Retirer le flou de l'arrière-plan
+        document.querySelector('.grille-container').classList.remove('blur');
     }
+
+    // Démarrer le minuteur lorsque la page est chargée
+    window.onload = startTimer;
 </script>
 
 </body>
