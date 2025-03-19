@@ -39,59 +39,7 @@
             max-width: 300px;
             height: auto;
         }
-        .bubble {
-            position: absolute;
-            top: -40px;
-            right: 10px;
-            background-color: #e0f7fa;
-            padding: 15px;
-            border-radius: 10px;
-            border: 2px solid #0079ff;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-            font-size: 20px;
-            max-width: 200px;
-            font-family: "Dancing Script", cursive;
-            font-optical-sizing: auto;
-            font-weight: 400;
-            font-style: normal;
-        }
-        .bubble::after {
-            content: "";
-            position: absolute;
-            bottom: -10px;
-            left: 20%;
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 10px solid #e0f7fa;
-        }
-        .start-button {
-            display: inline-block;
-            padding: 12px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-            background: linear-gradient(45deg, #007bff, #00c6ff);
-            border: none;
-            border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: all 0.3s ease-in-out;
-            text-decoration: none;
-            margin-top: 30px;
-        }
-        .start-button:hover {
-            background: linear-gradient(45deg, #ff4b2b, #ff416c);
-            box-shadow: 0 6px 20px rgba(255, 65, 108, 0.5);
-            transform: translateY(-2px);
-        }
-        .start-button:active {
-            transform: translateY(1px);
-            box-shadow: 0 3px 10px rgba(255, 65, 108, 0.3);
-        }
+
         .definition-label {
             text-align: left;
             width: 100%;
@@ -99,7 +47,6 @@
             margin-bottom: 0;
             max-width: 400px;
             font-size: 16px;
-
         }
 
         .definition-container {
@@ -115,7 +62,6 @@
         .definition-container p {
             white-space: pre-line;
         }
-
 
         .grille-container {
             display: inline-block;
@@ -175,7 +121,9 @@
         }
 
         .definition-display {
-            margin-top: 20px;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 600px;
             padding: 15px;
             background: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
@@ -183,10 +131,24 @@
             font-size: 16px;
             color: #333;
             text-align: left;
+            order: -1; /* Place la définition avant la grille */
         }
 
         .hidden {
             display: none;
+        }
+
+        .correct .case-contenu {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .case-contenu {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         @media screen and (max-width: 768px) {
@@ -263,47 +225,329 @@
             margin-bottom: 20px;
             color: #007bff;
         }
+
+        .grille-wrapper {
+            position: relative;
+        }
+
+        .blur-background {
+            pointer-events: none; /* Empêche les interactions avec l'arrière-plan */
+        }
+
+        .case-partagee {
+            filter: blur(1px); /* Léger flou pour indiquer une case partagée */
+            border: 2px dashed #007bff; /* Bordure en pointillés pour indiquer une case partagée */
+        }
+
+        /* Style pour les cases sélectionnées */
+        .case-selectionnee {
+            background-color: #b3e5fc !important;
+            border: 2px solid #0056b3 !important;
+            transform: scale(1.1);
+            z-index: 1;
+            position: relative;
+        }
+
+        /* Style pour les cases du mot sélectionné */
+        .mot-selectionne {
+            background-color: #e3f2fd !important;
+            border: 3px solid #007bff !important;
+            font-weight: bold;
+            z-index: 1;
+            position: relative;
+        }
+
+        /* Style pour le score */
+        .score {
+            margin-left: 100px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #28a745; /* Couleur verte pour indiquer le succès */
+        }
+
+        /* Animation pour le score */
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .score-update {
+            animation: pop 0.3s ease-in-out;
+        }
+        .keyboard-icon , .help-icon{
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            font-size: 24px;
+            color: #007bff;
+            cursor: pointer;
+            background: rgba(2, 3, 3, 0.9);
+            padding: 10px;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        .grille-container {
+            margin-bottom: 20px; /* Marge par défaut */
+        }
+        .keyboard-icon:hover {
+            background: #e3f2fd;
+        }
+
+        /* Style pour le clavier tactile */
+        .virtual-keyboard {
+            position: fixed; /* Changer de fixed à absolute */
+            bottom: 0; /* Position en bas de l'écran */
+            left: 50%; /* Centrer horizontalement */
+            transform: translateX(-50%); /* Centrer horizontalement */
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: none; /* Masqué par défaut */
+            z-index: 1000;
+            width: 90%; /* Largeur du clavier */
+            max-width: 400px; /* Largeur maximale */
+        }
+
+        .virtual-keyboard.visible {
+            display: block; /* Affiché lorsque visible */
+        }
+        .virtual-keyboard.visible + .grille-container {
+            margin-bottom: 200px; /* Augmenter la marge lorsque le clavier est visible */
+        }
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+
+        .keyboard-key {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s ease-in-out;
+        }
+
+        .keyboard-key:hover {
+            background: #0056b3;
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #007bff;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .close-button:hover {
+            color: #0056b3;
+        }
+
+
+        .keyboard-icon:hover, .help-icon:hover, .joker-icon:hover {
+            background: #e3f2fd;
+        }
+
+        .help-icon {
+            left: 70px; /* Position à côté de l'icône du clavier */
+        }
+
+
+
+        .keyboard-icon:hover, .help-icon:hover {
+            background: #e3f2fd;
+        }
+
+        .help-icon {
+            left: 70px; /* Position à côté de l'icône du clavier */
+        }
+
+        /* Style pour le conteneur de la définition */
+        .help-definition {
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            font-size: 16px;
+            color: #333;
+            text-align: left;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .help-definition.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
-
+<div class="main-wrapper">
 <div class="container">
     <div class="timer">
-        Temps restant : <span id="time">05:00</span>
-    </div><div id="definition-display" class="definition-display hidden">
+        Temps restant : <span id="time">05:30</span>
+        <span class="score">Score : <span id="score">0</span></span>
+    </div>
+    <div id="definition-display" class="definition-display hidden">
         <p id="definition-text"></p>
     </div>
-    <div class="grille-container">
-        <table>
-            {% for x in 1..14 %}
-                <tr>
-                    {% for y in 1..14 %}
-                        {% if grille[x][y].contenu %}
-                            <td class="case"
-                                data-x="{{ x }}"
-                                data-y="{{ y }}"
-                                data-mot-id="{{ grille[x][y].mot.id }}"
-                                onclick="openDefinition({{ grille[x][y].mot.id }}, '{{ grille[x][y].mot.definition }}')">
-                                {% if grille[x][y].numero %}
-                                    <div class="numero-externe">{{ grille[x][y].numero }}</div>
-                                {% endif %}
-                                <div class="case-contenu"></div> <!-- Afficher la lettre -->
-                            </td>
-                        {% else %}
-                            <td class="case-vide"></td> <!-- Case vide -->
-                        {% endif %}
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        </table>
+    <div class="grille-wrapper">
+        <div class="grille-container">
+            <table>
+                {% for x in 1..10 %}
+                    <tr>
+                        {% for y in 1..14 %}
+                            {% if grille[x][y].contenu %}
+                                <td class="case"
+                                    data-x="{{ x }}"
+                                    data-y="{{ y }}"
+                                    data-mot-id="{{ grille[x][y].mot.id }}"
+                                    onclick="openDefinition({{ grille[x][y].mot.id }}, '{{ grille[x][y].mot.definition }}', event)">
+                                    {% if grille[x][y].numero %}
+                                        <div class="numero-externe">{{ grille[x][y].numero }}</div>
+                                    {% endif %}
+                                    <div class="case-contenu" data-lettres="{{ grille[x][y].mot.mot }}"></div>
+                                </td>
+                            {% else %}
+                                <td class="case-vide"></td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
+    <!-- Conteneur pour la définition -->
+    <div id="help-definition" class="help-definition hidden">
+        <p>
+            Une _________ destinée à être mise en contact avec les diverses parties du _____ ______ (ongles, ________, lèvres, etc.) ou avec les _____, pour les ________, les ________, modifier leur aspects, les ________ et les maintenir en bon état.
+        </p>
+    </div>
+</div>
 
 </div>
 
+<div class="help-icon" onclick="toggleHelp()">
+    ⁉️🃏
+</div>
+
+<div class="keyboard-icon" onclick="toggleVirtualKeyboard()">
+    ⌨️
+</div>
+
+<!-- Clavier tactile -->
+<div class="virtual-keyboard" id="virtual-keyboard">
+    <div class="close-button" onclick="toggleVirtualKeyboard()">×</div>
+    <div class="keyboard-row">
+        <button class="keyboard-key" onclick="insertLetter('A')">A</button>
+        <button class="keyboard-key" onclick="insertLetter('B')">B</button>
+        <button class="keyboard-key" onclick="insertLetter('C')">C</button>
+        <button class="keyboard-key" onclick="insertLetter('D')">D</button>
+        <button class="keyboard-key" onclick="insertLetter('E')">E</button>
+        <button class="keyboard-key" onclick="insertLetter('F')">F</button>
+        <button class="keyboard-key" onclick="insertLetter('G')">G</button>
+    </div>
+    <div class="keyboard-row">
+        <button class="keyboard-key" onclick="insertLetter('H')">H</button>
+        <button class="keyboard-key" onclick="insertLetter('I')">I</button>
+        <button class="keyboard-key" onclick="insertLetter('J')">J</button>
+        <button class="keyboard-key" onclick="insertLetter('K')">K</button>
+        <button class="keyboard-key" onclick="insertLetter('L')">L</button>
+        <button class="keyboard-key" onclick="insertLetter('M')">M</button>
+    </div>
+    <div class="keyboard-row">
+        <button class="keyboard-key" onclick="insertLetter('N')">N</button>
+        <button class="keyboard-key" onclick="insertLetter('O')">O</button>
+        <button class="keyboard-key" onclick="insertLetter('P')">P</button>
+        <button class="keyboard-key" onclick="insertLetter('Q')">Q</button>
+        <button class="keyboard-key" onclick="insertLetter('R')">R</button>
+    </div>
+    <div class="keyboard-row">
+        <button class="keyboard-key" onclick="insertLetter('S')">S</button>
+        <button class="keyboard-key" onclick="insertLetter('T')">T</button>
+        <button class="keyboard-key" onclick="insertLetter('U')">U</button>
+        <button class="keyboard-key" onclick="insertLetter('V')">V</button>
+    </div>
+    <div class="keyboard-row">
+        <button class="keyboard-key" onclick="insertLetter('W')">W</button>
+        <button class="keyboard-key" onclick="insertLetter('X')">X</button>
+        <button class="keyboard-key" onclick="insertLetter('Y')">Y</button>
+        <button class="keyboard-key" onclick="insertLetter('Z')">Z</button>
+    </div>
+</div>
+
 <script>
+    let selectedCell = null;
     let currentMotId = null;
+    let currentCells = []; // Stocke toutes les cases du mot sélectionné
+    let currentIndex = 0; // Index de la case actuellement sélectionnée dans le mot
     let timer;
-    let timeLeft = 300; // 5 minutes en secondes
+    let timeLeft = 330; // 5 minutes en secondes
+    let score = 0; // Variable pour suivre le score
+    // Fonction pour basculer l'affichage de l'aide
+    function toggleHelp() {
+        const helpDefinition = document.getElementById('help-definition');
+        helpDefinition.classList.toggle('hidden');
+    }
+    let jokerCount = 4; // Nombre initial de jokers
+
+
+
+    // Fonction pour mettre à jour les cases partagées
+    function updateSharedCells(cell, letter) {
+        const x = cell.getAttribute('data-x');
+        const y = cell.getAttribute('data-y');
+        const sharedCells = document.querySelectorAll(`[data-x="${x}"][data-y="${y}"]`);
+        sharedCells.forEach(sharedCell => {
+            sharedCell.querySelector('.case-contenu').textContent = letter;
+        });
+    }
+    function toggleVirtualKeyboard() {
+        const keyboard = document.getElementById('virtual-keyboard');
+        const grilleContainer = document.querySelector('.grille-container');
+
+        keyboard.classList.toggle('visible');
+
+        // Ajuster la marge en bas de la grille lorsque le clavier est visible
+        if (keyboard.classList.contains('visible')) {
+            grilleContainer.style.marginBottom = '200px'; // Ajustez cette valeur selon vos besoins
+        } else {
+            grilleContainer.style.marginBottom = '20px'; // Rétablir la marge par défaut
+        }
+    }
+
+    // Fonction pour insérer une lettre dans la case sélectionnée
+    function insertLetter(letter) {
+        if (selectedCell) {
+            selectedCell.querySelector('.case-contenu').textContent = letter;
+
+            // Mettre à jour les cases partagées
+            updateSharedCells(selectedCell, letter);
+
+            // Passer à la case suivante
+            currentIndex++;
+            if (currentIndex < currentCells.length) {
+                // Retirer le style de la case actuelle
+
+                // Sélectionner la case suivante
+                selectedCell = currentCells[currentIndex];
+                selectedCell.classList.add('case-selectionnee');
+            } else {
+                // Toutes les cases sont remplies, vérifier le mot
+                checkWordCompletion();
+            }
+        }
+    }
 
     function startTimer() {
         const timeElement = document.getElementById('time');
@@ -315,15 +559,13 @@
                 gameOver();
             }
 
-            // Mettre à jour l'affichage du temps
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
             timeElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        }, 1000); // Mettre à jour toutes les secondes
+        }, 1000);
     }
 
     function gameOver() {
-        // Afficher le message "Game Over"
         const gameOverModal = document.createElement('div');
         gameOverModal.style.position = 'fixed';
         gameOverModal.style.top = '50%';
@@ -345,54 +587,151 @@
     }
 
     function restartGame() {
-        // Recharger la page pour recommencer
+        score = 0;
+        document.getElementById('score').textContent = score;
         window.location.reload();
     }
 
-    function openDefinition(motId, definition) {
-        if (!motId) return;
+    function openDefinition(motId, definition, event) {
+        event.stopPropagation();
 
+        // Réinitialiser la sélection actuelle
+        resetSelection();
+
+        // Mettre à jour les variables pour la nouvelle sélection
         currentMotId = motId;
 
-        // Mettre en gras toutes les cases partagées avec le même mot
-        const cases = document.querySelectorAll(`.case[data-mot-id="${motId}"]`);
-        cases.forEach(cell => {
-            cell.style.fontWeight = 'bold';
-        });
-
-        // Afficher la définition du mot
+        // Mettre en avant la définition
         const definitionDisplay = document.getElementById('definition-display');
         const definitionText = document.getElementById('definition-text');
         definitionText.textContent = definition;
         definitionDisplay.classList.remove('hidden');
 
-        // Flouter l'arrière-plan
-        document.querySelector('.grille-container').classList.add('blur');
+        // Récupérer toutes les cases du mot
+        currentCells = [...document.querySelectorAll(`[data-mot-id="${motId}"]`)];
+        currentIndex = 0; // Commencer par la première case du mot
+
+        // Trouver la première case vide
+        let firstEmptyCellIndex = 0;
+        for (let i = 0; i < currentCells.length; i++) {
+            const cellContent = currentCells[i].querySelector('.case-contenu').textContent;
+            if (!cellContent) {
+                firstEmptyCellIndex = i;
+                break;
+            }
+        }
+
+        // Mettre en avant les cases du mot sélectionné
+        currentCells.forEach(cell => {
+            cell.classList.add('mot-selectionne');
+        });
+
+        // Sélectionner la première case
+        selectedCell = currentCells[firstEmptyCellIndex];
+        selectedCell.classList.add('case-selectionnee');
+        currentIndex = firstEmptyCellIndex;
     }
 
-    // Réinitialiser la sélection lorsque l'utilisateur clique en dehors des cases
+    document.addEventListener('keydown', (e) => {
+        if (selectedCell) {
+            if (e.key.match(/^[a-zA-Z]$/)) {
+            const letter = e.key.toUpperCase();
+            selectedCell.querySelector('.case-contenu').textContent = letter;
+
+            // Mettre à jour les cases partagées
+            updateSharedCells(selectedCell, letter);
+
+            // Passer à la case suivante
+            currentIndex++;
+            if (currentIndex < currentCells.length) {
+                // Retirer le style de la case actuelle
+
+                // Sélectionner la case suivante
+                selectedCell = currentCells[currentIndex];
+                selectedCell.classList.add('case-selectionnee');
+            } else {
+                // Toutes les cases sont remplies, vérifier le mot
+                checkWordCompletion();
+            }
+        }else if (e.key === 'Backspace' || e.key === 'Delete') {
+                // Si la touche Backspace ou Delete est pressée, effacer la lettre
+                selectedCell.querySelector('.case-contenu').textContent = '';
+
+                // Mettre à jour les cases partagées
+                updateSharedCells(selectedCell, '');
+
+                // Revenir à la case précédente
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    selectedCell = currentCells[currentIndex];
+                    selectedCell.classList.add('case-selectionnee');
+                }
+            }
+        }
+    });
+
+
+
+    function checkWordCompletion() {
+        const userWord = currentCells.map(cell => cell.querySelector('.case-contenu').textContent).join('');
+        const correctWord = currentCells[0].querySelector('.case-contenu').dataset.lettres;
+
+        if (userWord === correctWord) {
+            alert('Félicitations ! Mot correct !');
+            currentCells.forEach(cell => cell.classList.add('correct'));
+
+            // Incrémenter le score
+            score++;
+            const scoreElement = document.getElementById('score');
+            scoreElement.textContent = score;
+            scoreElement.classList.add('score-update');
+
+            // Retirer l'animation après qu'elle soit terminée
+            setTimeout(() => {
+                scoreElement.classList.remove('score-update');
+            }, 300);
+        } else {
+            alert('Incorrect, réessayez !');
+            currentCells.forEach(cell => {
+                cell.querySelector('.case-contenu').textContent = '';
+            });
+        }
+        resetSelection();
+    }
+
+    function resetSelection() {
+        // Retirer le flou de l'arrière-plan
+        const grilleWrapper = document.querySelector('.grille-wrapper');
+        grilleWrapper.classList.remove('blur-background');
+
+        // Retirer le style des cases du mot sélectionné
+        if (currentCells.length > 0) {
+            currentCells.forEach(cell => {
+                cell.classList.remove('mot-selectionne');
+                cell.classList.remove('case-partagee');
+                cell.classList.remove('case-selectionnee');
+            });
+        }
+
+        // Retirer le style de la case sélectionnée
+
+
+        // Masquer la définition
+        document.getElementById('definition-display').classList.add('hidden');
+
+        // Réinitialiser les variables
+        selectedCell = null;
+        currentMotId = null;
+        currentCells = [];
+        currentIndex = 0;
+    }
+
     document.addEventListener('click', (event) => {
         if (!event.target.closest('.case')) {
             resetSelection();
         }
     });
 
-    function resetSelection() {
-        // Retirer le gras de toutes les cases
-        const cases = document.querySelectorAll('.case');
-        cases.forEach(cell => {
-            cell.style.fontWeight = 'normal';
-        });
-
-        // Masquer la définition
-        const definitionDisplay = document.getElementById('definition-display');
-        definitionDisplay.classList.add('hidden');
-
-        // Retirer le flou de l'arrière-plan
-        document.querySelector('.grille-container').classList.remove('blur');
-    }
-
-    // Démarrer le minuteur lorsque la page est chargée
     window.onload = startTimer;
 </script>
 

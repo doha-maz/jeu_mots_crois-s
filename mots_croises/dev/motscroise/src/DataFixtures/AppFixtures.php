@@ -11,6 +11,7 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
+        // Liste des mots avec leurs définitions, positions et orientation
         $mots = [
             ['mot' => 'SUBSTANCE', 'definition' => 'Matière qui compose un objet ou un être.', 'x' => 7, 'y' => 2, 'horizontal' => true],
             ['mot' => 'CORPS', 'definition' => 'Ensemble des parties physiques d’un être vivant.', 'x' => 3, 'y' => 2, 'horizontal' => false],
@@ -22,6 +23,10 @@ class AppFixtures extends Fixture
             ['mot' => 'PROTEGER', 'definition' => 'Mettre à l’abri d’un danger.', 'x' => 3, 'y' => 13, 'horizontal' => false],
         ];
 
+        // Tableau pour stocker les cases partagées
+        $casesPartagees = [];
+
+        // Créer les mots et leurs cases
         foreach ($mots as $index => $data) {
             $mot = new Mot();
             $mot->setMot($data['mot']);
@@ -31,28 +36,38 @@ class AppFixtures extends Fixture
             $manager->persist($mot);
 
             for ($i = 0; $i < strlen($data['mot']); $i++) {
-                $case = new CaseM();
-                if ($data['horizontal']) {
-                    $case->setPositionX($data['x']);
-                    $case->setPositionY($data['y'] + $i);
+                // Calculer les coordonnées de la case
+                $x = $data['x'] + ($data['horizontal'] ? 0 : $i);
+                $y = $data['y'] + ($data['horizontal'] ? $i : 0);
+
+                // Vérifier si la case existe déjà (partagée)
+                $caseKey = "{$x}_{$y}";
+                if (isset($casesPartagees[$caseKey])) {
+                    // Si la case existe déjà, l'associer au mot actuel
+                    $case = $casesPartagees[$caseKey];
+                    $case->addMot($mot);
+                    $mot->addCase($case);
                 } else {
-                    $case->setPositionX($data['x'] + $i);
-                    $case->setPositionY($data['y']);
+                    // Sinon, créer une nouvelle case
+                    $case = new CaseM();
+                    $case->setPositionX($x);
+                    $case->setPositionY($y);
+                    $case->setContenu($data['mot'][$i]);
+                    $case->setAffiche(true);
+                    if ($i === 0) {
+                        $case->setNumero($index + 1); // Numéroter la première case du mot
+                    }
+                    $case->addMot($mot);
+                    $mot->addCase($case);
+                    $manager->persist($case);
+
+                    // Stocker la case dans le tableau des cases partagées
+                    $casesPartagees[$caseKey] = $case;
                 }
-                $case->setContenu($data['mot'][$i]);
-                $case->setAffiche(true);
-                if ($i === 0) {
-                    $case->setNumero($index + 1);
-                }
-                $case->addMot($mot);
-                $mot->addCase($case);
-                $manager->persist($case);
             }
         }
 
-
-
-
+        // Enregistrer toutes les entités en base de données
         $manager->flush();
     }
 }
