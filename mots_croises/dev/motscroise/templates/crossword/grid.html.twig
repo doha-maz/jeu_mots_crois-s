@@ -630,6 +630,8 @@
         selectedCell = currentCells[firstEmptyCellIndex];
         selectedCell.classList.add('case-selectionnee');
         currentIndex = firstEmptyCellIndex;
+        // Mettre à jour les cases partagées
+        updateSharedCells(selectedCell, selectedCell.querySelector('.case-contenu').textContent);
     }
 
     document.addEventListener('keydown', (e) => {
@@ -689,7 +691,7 @@
             // Retirer l'animation après qu'elle soit terminée
             setTimeout(() => {
                 scoreElement.classList.remove('score-update');
-            }, 300);
+            }, 330);
         } else {
             alert('Incorrect, réessayez !');
             currentCells.forEach(cell => {
