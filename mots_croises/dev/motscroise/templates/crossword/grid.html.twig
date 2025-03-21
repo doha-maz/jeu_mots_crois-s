@@ -389,6 +389,198 @@
         .help-definition.hidden {
             display: none;
         }
+
+        #congratulations-button a {
+            display: inline-block;
+            background: linear-gradient(135deg, #28a745, #218838);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            text-decoration: none;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #congratulations-button a:hover {
+            background: linear-gradient(135deg, #ff66b2, #b266ff);
+            transform: scale(1.08);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #congratulations-button a::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.6s ease-in-out;
+            transform: translate(-50%, -50%) rotate(45deg);
+            opacity: 0;
+        }
+
+        #congratulations-button a:hover::before {
+            width: 100%;
+            height: 100%;
+            opacity: 1;
+        }
+
+        #congratulations-button a:active {
+            transform: scale(0.98);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        @keyframes popUp {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        /* Fond semi-transparent */
+        .game-over-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+
+        /* Boîte du message Game Over */
+        .game-over-modal {
+            background: linear-gradient(135deg, #ff99cc, #cc99ff, #66ccff); /* Dégradé rose, mauve, bleu */
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0px 0px 20px rgba(255, 105, 180, 0.6);
+            border: 3px solid white;
+            animation: popUp 0.5s ease-in-out;
+            position: relative;
+        }
+
+        /* Titre dramatique */
+        .game-over-modal h2 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0px 0px 10px #ff66b2;
+            animation: glow 1.5s infinite alternate;
+        }
+
+        /* Texte */
+        .game-over-modal p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        /* Bouton stylisé */
+        .game-over-modal button {
+            background: linear-gradient(135deg, #ff66b2, #cc66ff);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0px 4px 10px rgba(255, 105, 180, 0.5);
+        }
+
+        /* Effet au survol du bouton */
+        .game-over-modal button:hover {
+            background: linear-gradient(135deg, #ff3399, #b266ff);
+            transform: scale(1.05);
+            box-shadow: 0px 0px 15px rgba(255, 105, 180, 0.8);
+        }
+        @keyframes glow {
+            from {
+                text-shadow: 0px 0px 10px #ff66b2;
+            }
+            to {
+                text-shadow: 0px 0px 20px #ff99cc;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            from {
+                text-shadow: 0px 0px 10px red;
+            }
+            to {
+                text-shadow: 0px 0px 20px red;
+            }
+        }
+        .message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 30px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 10px;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInOut 1s ease-in-out;
+            z-index: 1000;
+        }
+
+        /* Message de félicitations */
+        .congratulations {
+            background: linear-gradient(135deg, #28a745, #4CAF50);
+            color: white;
+            box-shadow: 0px 0px 20px rgba(40, 167, 69, 0.7);
+        }
+
+        /* Message d'erreur */
+        .error {
+            background: linear-gradient(135deg, #ff4d4d, #cc0000);
+            color: white;
+            box-shadow: 0px 0px 20px rgba(255, 77, 77, 0.7);
+        }
+
+        /* Animation d’apparition/disparition */
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+        }
     </style>
 </head>
 <body>
@@ -430,10 +622,15 @@
             </table>
         </div>
     </div>
+    <div id="congratulations-button" class="hidden">
+        <a href="{{ path('app_congratulations') }}" >
+            🎉 définition complète 🎉
+        </a>
+    </div>
     <!-- Conteneur pour la définition -->
     <div id="help-definition" class="help-definition hidden">
         <p>
-            Une _________ destinée à être mise en contact avec les diverses parties du _____ ______ (ongles, ________, lèvres, etc.) ou avec les _____, pour les ________, les ________, modifier leur aspects, les ________ et les maintenir en bon état.
+            Une <sup>1</sup>_________ destinée à être mise en contact avec les diverses parties du <sup>2</sup>_____ <sup>3</sup>______ (ongles, <sup>5</sup>________, lèvres, etc.) ou avec les <sup>4</sup>_____, pour les <sup>6</sup>________, les <sup>7</sup>________, modifier leurs aspects, les <sup>8</sup>________ et les maintenir en bon état.
         </p>
     </div>
 </div>
@@ -573,24 +770,22 @@
     }
 
     function gameOver() {
+        // Création du fond sombre
+        const overlay = document.createElement('div');
+        overlay.classList.add('game-over-overlay');
+
+        // Création de la boîte Game Over
         const gameOverModal = document.createElement('div');
-        gameOverModal.style.position = 'fixed';
-        gameOverModal.style.top = '50%';
-        gameOverModal.style.left = '50%';
-        gameOverModal.style.transform = 'translate(-50%, -50%)';
-        gameOverModal.style.backgroundColor = 'white';
-        gameOverModal.style.padding = '20px';
-        gameOverModal.style.border = '1px solid #000';
-        gameOverModal.style.zIndex = '1000';
-        gameOverModal.style.textAlign = 'center';
+        gameOverModal.classList.add('game-over-modal');
 
         gameOverModal.innerHTML = `
-            <h2>Game Over</h2>
-            <p>Le temps est écoulé !</p>
-            <button onclick="restartGame()">Recommencer</button>
-        `;
+        <h2>Game Over</h2>
+        <p>Le temps est écoulé !</p>
+        <button onclick="restartGame()">Recommencer</button>
+    `;
 
-        document.body.appendChild(gameOverModal);
+        overlay.appendChild(gameOverModal);
+        document.body.appendChild(overlay);
     }
 
     function restartGame() {
@@ -712,7 +907,7 @@
         console.log("Mot correct :", correctWord);
 
         if (userWord === correctWord) {
-            alert('Félicitations ! Mot correct !');
+            showMessage(' ✅ correct!', 'congratulations');
             currentCells.forEach(cell => cell.classList.add('correct'));
 
             // Incrémenter le score
@@ -725,14 +920,33 @@
             setTimeout(() => {
                 scoreElement.classList.remove('score-update');
             }, 330);
+            if (score === 8) {
+                const congratulationsButton = document.getElementById('congratulations-button');
+                congratulationsButton.classList.remove('hidden');
+            }
         } else {
-            alert('Incorrect, réessayez !');
+            showMessage('❌ Incorrect!', 'error');
             currentCells.forEach(cell => {
                 cell.querySelector('.case-contenu').textContent = '';
             });
         }
         resetSelection();
     }
+
+    function showMessage(text, type) {
+        const message = document.createElement('div');
+        message.textContent = text;
+        message.classList.add('message', type);
+
+        document.body.appendChild(message);
+
+        // Supprimer le message après 1 seconde
+        setTimeout(() => {
+            message.remove();
+        }, 2000);
+    }
+
+
 
     function resetSelection() {
         // Retirer le flou de l'arrière-plan

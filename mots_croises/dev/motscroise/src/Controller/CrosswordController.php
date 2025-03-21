@@ -52,34 +52,10 @@ final class CrosswordController extends AbstractController
         ]);
     }
 
-    #[Route('/definition/{id}', name: 'get_definition')]
-    public function getDefinition(int $id, EntityManagerInterface $em): JsonResponse
+    #[Route('/congratulations', name: 'app_congratulations')]
+    public function congratulations(): Response
     {
-        $mot = $em->getRepository(Mot::class)->find($id);
-        if (!$mot) return new JsonResponse(['error' => 'Mot non trouvé'], 404);
-
-        return new JsonResponse(['definition' => $mot->getDefinition()]);
-    }
-
-    #[Route('/validate/{id}', name: 'validate_answer', methods: ['POST'])]
-    public function validateAnswer(int $id, Request $request, EntityManagerInterface $em): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-        $mot = $em->getRepository(Mot::class)->find($id);
-        if (!$mot) return new JsonResponse(['error' => 'Mot non trouvé'], 404);
-
-        $isCorrect = strtoupper($data['answer']) === strtoupper($mot->getMot());
-
-        if ($isCorrect) {
-            $cases = $em->getRepository(CaseM::class)->findBy(['mot' => $mot]);
-            $word = $mot->getMot();
-            foreach ($cases as $index => $case) {
-                $case->setContenu($word[$index]);
-            }
-            $em->flush();
-        }
-
-        return new JsonResponse(['correct' => $isCorrect]);
+        return $this->render('felicitation/congratulation.html.twig');
     }
 
 }
