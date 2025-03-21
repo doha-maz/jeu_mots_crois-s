@@ -24,7 +24,7 @@ final class CrosswordController extends AbstractController
             for ($y = 1; $y <= 14; $y++) {
                 $grille[$x][$y] = [
                     'contenu' => '',
-                    'mot' => null,
+                    'mots' => [],
                     'numero' => null,
                     'casePartage' => false,
                 ];
@@ -36,8 +36,8 @@ final class CrosswordController extends AbstractController
             foreach ($cases as $case) {
                 $x = $case->getPositionX();
                 $y = $case->getPositionY();
+                $grille[$x][$y]['mots'][] = $mot;
                 $grille[$x][$y]['contenu'] = $case->getContenu();
-                $grille[$x][$y]['mot'] = $mot;
                 if ($case->getNumero()) {
                     $grille[$x][$y]['numero'] = $case->getNumero();
                 }

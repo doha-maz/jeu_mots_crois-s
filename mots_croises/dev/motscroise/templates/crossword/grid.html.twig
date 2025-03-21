@@ -414,12 +414,12 @@
                                 <td class="case {% if grille[x][y].casePartage %}case-partagee{% endif %}"
                                     data-x="{{ x }}"
                                     data-y="{{ y }}"
-                                    data-mot-id="{{ grille[x][y].mot.id }}"
-                                    onclick="openDefinition({{ grille[x][y].mot.id }}, '{{ grille[x][y].mot.definition }}', event)">
+                                    data-mot-id="{% for mot in grille[x][y].mots %}{{ mot.id }} {% endfor %}"
+                                    onclick="openDefinition({{ grille[x][y].mots[0].id }}, '{{ grille[x][y].mots[0].definition }}', event)">
                                     {% if grille[x][y].numero %}
                                         <div class="numero-externe">{{ grille[x][y].numero }}</div>
                                     {% endif %}
-                                    <div class="case-contenu" data-lettres="{{ grille[x][y].mot.mot }}"></div>
+                                    <div class="case-contenu" data-lettres="{{ grille[x][y].mots[0].mot }}"></div>
                                 </td>
                             {% else %}
                                 <td class="case-vide"></td>
@@ -441,7 +441,7 @@
 </div>
 
 <div class="help-icon" onclick="toggleHelp()">
-    ⁉️🃏
+    🃏
 </div>
 
 <div class="keyboard-icon" onclick="toggleVirtualKeyboard()">
@@ -620,27 +620,17 @@
 
         // Récupérer toutes les cases du mot
         currentCells = [];
-        const selectedCells = document.querySelectorAll(`td[data-mot-id="${motId}"]`);
+        const selectedCells = document.querySelectorAll(`td[data-mot-id*="${motId}"]`);
 
         console.log("Cases sélectionnées :", selectedCells);
         console.log("Cases trouvées :", selectedCells.length);
 
         selectedCells.forEach(cell => {
-            const x = cell.getAttribute('data-x');
-            const y = cell.getAttribute('data-y');
-
-            console.log(`Case ajoutée - X: ${x}, Y: ${y}`);
-
-            currentCells.push(cell);
-
-            // Ajouter les cases partagées
-            document.querySelectorAll(`td.case-partagee[data-x="${x}"][data-y="${y}"]`).forEach(sharedCell => {
-                const motsPartages = sharedCell.getAttribute("data-mot-id").split(",");
-                if (!currentCells.includes(sharedCell) && motsPartages.includes(motId.toString())) {
-                    console.log(`Case partagée ajoutée - X: ${x}, Y: ${y}`);
-                    currentCells.push(sharedCell);
-                }
-            });
+            const motsPartages = cell.getAttribute('data-mot-id').split(' '); // Séparer les IDs des mots
+            if (motsPartages.includes(motId.toString())) {
+                console.log("Case ajoutée - X:", cell.getAttribute('data-x'), "Y:", cell.getAttribute('data-y'));
+                currentCells.push(cell);
+            }
         });
 
         // Vérifier si des cases ont été trouvées
@@ -712,8 +702,14 @@
 
 
     function checkWordCompletion() {
-        const userWord = currentCells.map(cell => cell.querySelector('.case-contenu').textContent).join('');
-        const correctWord = currentCells[0].querySelector('.case-contenu').dataset.lettres;
+        const userWord = currentCells.map(cell => cell.querySelector('.case-contenu').textContent.trim()).join('').toUpperCase();
+        const correctWord = currentCells
+            .find(cell => cell.getAttribute('data-mot-id').includes(currentMotId.toString())) // Trouver la case associée au mot sélectionné
+            .querySelector('.case-contenu')
+            .dataset.lettres.trim() // Supprimer les espaces
+            .toUpperCase();
+        console.log("Mot saisi :", userWord);
+        console.log("Mot correct :", correctWord);
 
         if (userWord === correctWord) {
             alert('Félicitations ! Mot correct !');
