@@ -235,8 +235,8 @@
         }
 
         .case-partagee {
-            filter: blur(1px); /* Léger flou pour indiquer une case partagée */
             border: 2px dashed #007bff; /* Bordure en pointillés pour indiquer une case partagée */
+            background-color: #e3f2fd;/* Bordure en pointillés pour indiquer une case partagée */
         }
 
         /* Style pour les cases sélectionnées */
@@ -404,11 +404,14 @@
     <div class="grille-wrapper">
         <div class="grille-container">
             <table>
+
                 {% for x in 1..10 %}
                     <tr>
                         {% for y in 1..14 %}
+
                             {% if grille[x][y].contenu %}
-                                <td class="case"
+
+                                <td class="case {% if grille[x][y].casePartage %}case-partagee{% endif %}"
                                     data-x="{{ x }}"
                                     data-y="{{ y }}"
                                     data-mot-id="{{ grille[x][y].mot.id }}"
@@ -499,7 +502,7 @@
         const helpDefinition = document.getElementById('help-definition');
         helpDefinition.classList.toggle('hidden');
     }
-    let jokerCount = 4; // Nombre initial de jokers
+
 
 
 
@@ -509,7 +512,10 @@
         const y = cell.getAttribute('data-y');
         const sharedCells = document.querySelectorAll(`[data-x="${x}"][data-y="${y}"]`);
         sharedCells.forEach(sharedCell => {
-            sharedCell.querySelector('.case-contenu').textContent = letter;
+            const contenuDiv = sharedCell.querySelector('.case-contenu');
+            if (contenuDiv) {
+                contenuDiv.textContent = letter;
+            }
         });
     }
     function toggleVirtualKeyboard() {
@@ -529,17 +535,17 @@
     // Fonction pour insérer une lettre dans la case sélectionnée
     function insertLetter(letter) {
         if (selectedCell) {
+            // Écrire la lettre dans la case sélectionnée
             selectedCell.querySelector('.case-contenu').textContent = letter;
 
-            // Mettre à jour les cases partagées
+            // Mettre à jour toutes les cases partagées à cette position
             updateSharedCells(selectedCell, letter);
 
             // Passer à la case suivante
             currentIndex++;
-            if (currentIndex < currentCells.length) {
-                // Retirer le style de la case actuelle
 
-                // Sélectionner la case suivante
+
+            if (currentIndex < currentCells.length) {
                 selectedCell = currentCells[currentIndex];
                 selectedCell.classList.add('case-selectionnee');
             } else {
@@ -548,6 +554,7 @@
             }
         }
     }
+
 
     function startTimer() {
         const timeElement = document.getElementById('time');
@@ -595,44 +602,74 @@
     function openDefinition(motId, definition, event) {
         event.stopPropagation();
 
+        console.log("Mot sélectionné :", motId);
+
         // Réinitialiser la sélection actuelle
         resetSelection();
 
         // Mettre à jour les variables pour la nouvelle sélection
         currentMotId = motId;
 
-        // Mettre en avant la définition
+        // Afficher la définition
         const definitionDisplay = document.getElementById('definition-display');
         const definitionText = document.getElementById('definition-text');
-        definitionText.textContent = definition;
-        definitionDisplay.classList.remove('hidden');
-
-        // Récupérer toutes les cases du mot
-        currentCells = [...document.querySelectorAll(`[data-mot-id="${motId}"]`)];
-        currentIndex = 0; // Commencer par la première case du mot
-
-        // Trouver la première case vide
-        let firstEmptyCellIndex = 0;
-        for (let i = 0; i < currentCells.length; i++) {
-            const cellContent = currentCells[i].querySelector('.case-contenu').textContent;
-            if (!cellContent) {
-                firstEmptyCellIndex = i;
-                break;
-            }
+        if (definitionDisplay && definitionText) {
+            definitionText.textContent = definition;
+            definitionDisplay.classList.remove('hidden');
         }
 
-        // Mettre en avant les cases du mot sélectionné
+        // Récupérer toutes les cases du mot
+        currentCells = [];
+        const selectedCells = document.querySelectorAll(`td[data-mot-id="${motId}"]`);
+
+        console.log("Cases sélectionnées :", selectedCells);
+        console.log("Cases trouvées :", selectedCells.length);
+
+        selectedCells.forEach(cell => {
+            const x = cell.getAttribute('data-x');
+            const y = cell.getAttribute('data-y');
+
+            console.log(`Case ajoutée - X: ${x}, Y: ${y}`);
+
+            currentCells.push(cell);
+
+            // Ajouter les cases partagées
+            document.querySelectorAll(`td.case-partagee[data-x="${x}"][data-y="${y}"]`).forEach(sharedCell => {
+                const motsPartages = sharedCell.getAttribute("data-mot-id").split(",");
+                if (!currentCells.includes(sharedCell) && motsPartages.includes(motId.toString())) {
+                    console.log(`Case partagée ajoutée - X: ${x}, Y: ${y}`);
+                    currentCells.push(sharedCell);
+                }
+            });
+        });
+
+        // Vérifier si des cases ont été trouvées
+        if (currentCells.length === 0) {
+            console.error("Aucune case trouvée pour ce mot.");
+            return;
+        }
+
+        // Appliquer la classe CSS pour mettre en avant les cases
         currentCells.forEach(cell => {
+            console.log("Ajout de la classe 'mot-selectionne' à :", cell);
             cell.classList.add('mot-selectionne');
         });
 
-        // Sélectionner la première case
-        selectedCell = currentCells[firstEmptyCellIndex];
-        selectedCell.classList.add('case-selectionnee');
-        currentIndex = firstEmptyCellIndex;
-        // Mettre à jour les cases partagées
-        updateSharedCells(selectedCell, selectedCell.querySelector('.case-contenu').textContent);
+        // Sélectionner la première case du mot
+        currentIndex = 0;
+
+        if (currentCells[currentIndex]) {
+            selectedCell = currentCells[currentIndex];
+            console.log("Ordre des cases sélectionnées :", currentCells);
+            console.log("Toutes les cases du DOM avec Y=8 :", document.querySelectorAll('[data-y="8"]'));
+            console.log("Case (3,8) :", document.querySelector('[data-x="3"][data-y="8"]'));
+
+            selectedCell.classList.add('case-selectionnee');
+            selectedCell.focus(); // Activer pour taper directement
+            console.log("Première case activée :", selectedCell);
+        }
     }
+
 
     document.addEventListener('keydown', (e) => {
         if (selectedCell) {

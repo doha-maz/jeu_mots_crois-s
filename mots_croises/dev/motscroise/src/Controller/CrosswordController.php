@@ -26,6 +26,7 @@ final class CrosswordController extends AbstractController
                     'contenu' => '',
                     'mot' => null,
                     'numero' => null,
+                    'casePartage' => false,
                 ];
             }
         }
@@ -39,6 +40,10 @@ final class CrosswordController extends AbstractController
                 $grille[$x][$y]['mot'] = $mot;
                 if ($case->getNumero()) {
                     $grille[$x][$y]['numero'] = $case->getNumero();
+                }
+                // Si la case est partagée, mettre à jour la clé casePartage
+                if ($case->isCasePartage()) {
+                    $grille[$x][$y]['casePartage'] = true;
                 }
             }
         }

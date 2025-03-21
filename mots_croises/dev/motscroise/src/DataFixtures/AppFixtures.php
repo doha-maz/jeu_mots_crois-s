@@ -44,9 +44,17 @@ class AppFixtures extends Fixture
                 $caseKey = "{$x}_{$y}";
                 if (isset($casesPartagees[$caseKey])) {
                     // Si la case existe déjà, l'associer au mot actuel
-                    $case = $casesPartagees[$caseKey];
-                    $case->addMot($mot);
-                    $mot->addCase($case);
+                    // Si la case existe déjà et est partagée, on va la recréer pour le nouveau mot
+                    $case = new CaseM(); // Créer une nouvelle instance de la case
+                    $case->setPositionX($x);
+                    $case->setPositionY($y);
+                    $case->setContenu($data['mot'][$i]);
+                    $case->setAffiche(true);
+                    if ($i === 0) {
+                        $case->setNumero($index + 1); // Numéroter la première case du mot
+                    }
+                    $case->setCasePartage(true);
+                    $manager->persist($case);
                 } else {
                     // Sinon, créer une nouvelle case
                     $case = new CaseM();
@@ -57,15 +65,17 @@ class AppFixtures extends Fixture
                     if ($i === 0) {
                         $case->setNumero($index + 1); // Numéroter la première case du mot
                     }
-                    $case->addMot($mot);
-                    $mot->addCase($case);
                     $manager->persist($case);
-
-                    // Stocker la case dans le tableau des cases partagées
                     $casesPartagees[$caseKey] = $case;
                 }
+                $case->addMot($mot);
+                $mot->addCase($case);
             }
         }
+
+
+
+
 
         // Enregistrer toutes les entités en base de données
         $manager->flush();

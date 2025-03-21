@@ -30,7 +30,7 @@ class CaseM
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $casePartage = false;
 
-    #[ORM\ManyToMany(targetEntity: Mot::class, inversedBy: 'cases')]
+    #[ORM\ManyToMany(targetEntity: Mot::class, inversedBy: 'cases', cascade: ['persist'])]
     #[ORM\JoinTable(name: 'case_mot')]
     private Collection $mots;
 
@@ -101,7 +101,7 @@ class CaseM
 
     public function isCasePartage(): bool
     {
-        return $this->casePartage;
+        return $this->casePartage; // Retourne la valeur de la propriété casePartage
     }
 
     public function setCasePartage(bool $casePartage): void
