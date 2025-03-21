@@ -275,10 +275,10 @@
         .score-update {
             animation: pop 0.3s ease-in-out;
         }
-        .keyboard-icon , .help-icon{
+        .help-icon{
             position: fixed;
             bottom: 20px;
-            left: 20px;
+            left: 0;
             font-size: 24px;
             color: #007bff;
             cursor: pointer;
@@ -291,53 +291,10 @@
         .grille-container {
             margin-bottom: 20px; /* Marge par défaut */
         }
-        .keyboard-icon:hover {
-            background: #e3f2fd;
-        }
 
-        /* Style pour le clavier tactile */
-        .virtual-keyboard {
-            position: fixed; /* Changer de fixed à absolute */
-            bottom: 0; /* Position en bas de l'écran */
-            left: 50%; /* Centrer horizontalement */
-            transform: translateX(-50%); /* Centrer horizontalement */
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            display: none; /* Masqué par défaut */
-            z-index: 1000;
-            width: 90%; /* Largeur du clavier */
-            max-width: 400px; /* Largeur maximale */
-        }
 
-        .virtual-keyboard.visible {
-            display: block; /* Affiché lorsque visible */
-        }
-        .virtual-keyboard.visible + .grille-container {
-            margin-bottom: 200px; /* Augmenter la marge lorsque le clavier est visible */
-        }
-        .keyboard-row {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            margin-bottom: 5px;
-        }
 
-        .keyboard-key {
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.2s ease-in-out;
-        }
 
-        .keyboard-key:hover {
-            background: #0056b3;
-        }
         .close-button {
             position: absolute;
             top: 10px;
@@ -353,23 +310,21 @@
         }
 
 
-        .keyboard-icon:hover, .help-icon:hover, .joker-icon:hover {
+         .help-icon:hover, .joker-icon:hover {
             background: #e3f2fd;
         }
 
         .help-icon {
-            left: 70px; /* Position à côté de l'icône du clavier */
+            left: 10px; /* Position à côté de l'icône du clavier */
         }
 
 
 
-        .keyboard-icon:hover, .help-icon:hover {
+         .help-icon:hover {
             background: #e3f2fd;
         }
 
-        .help-icon {
-            left: 70px; /* Position à côté de l'icône du clavier */
-        }
+        
 
         /* Style pour le conteneur de la définition */
         .help-definition {
@@ -641,50 +596,6 @@
     🃏
 </div>
 
-<div class="keyboard-icon" onclick="toggleVirtualKeyboard()">
-    ⌨️
-</div>
-
-<!-- Clavier tactile -->
-<div class="virtual-keyboard" id="virtual-keyboard">
-    <div class="close-button" onclick="toggleVirtualKeyboard()">×</div>
-    <div class="keyboard-row">
-        <button class="keyboard-key" onclick="insertLetter('A')">A</button>
-        <button class="keyboard-key" onclick="insertLetter('B')">B</button>
-        <button class="keyboard-key" onclick="insertLetter('C')">C</button>
-        <button class="keyboard-key" onclick="insertLetter('D')">D</button>
-        <button class="keyboard-key" onclick="insertLetter('E')">E</button>
-        <button class="keyboard-key" onclick="insertLetter('F')">F</button>
-        <button class="keyboard-key" onclick="insertLetter('G')">G</button>
-    </div>
-    <div class="keyboard-row">
-        <button class="keyboard-key" onclick="insertLetter('H')">H</button>
-        <button class="keyboard-key" onclick="insertLetter('I')">I</button>
-        <button class="keyboard-key" onclick="insertLetter('J')">J</button>
-        <button class="keyboard-key" onclick="insertLetter('K')">K</button>
-        <button class="keyboard-key" onclick="insertLetter('L')">L</button>
-        <button class="keyboard-key" onclick="insertLetter('M')">M</button>
-    </div>
-    <div class="keyboard-row">
-        <button class="keyboard-key" onclick="insertLetter('N')">N</button>
-        <button class="keyboard-key" onclick="insertLetter('O')">O</button>
-        <button class="keyboard-key" onclick="insertLetter('P')">P</button>
-        <button class="keyboard-key" onclick="insertLetter('Q')">Q</button>
-        <button class="keyboard-key" onclick="insertLetter('R')">R</button>
-    </div>
-    <div class="keyboard-row">
-        <button class="keyboard-key" onclick="insertLetter('S')">S</button>
-        <button class="keyboard-key" onclick="insertLetter('T')">T</button>
-        <button class="keyboard-key" onclick="insertLetter('U')">U</button>
-        <button class="keyboard-key" onclick="insertLetter('V')">V</button>
-    </div>
-    <div class="keyboard-row">
-        <button class="keyboard-key" onclick="insertLetter('W')">W</button>
-        <button class="keyboard-key" onclick="insertLetter('X')">X</button>
-        <button class="keyboard-key" onclick="insertLetter('Y')">Y</button>
-        <button class="keyboard-key" onclick="insertLetter('Z')">Z</button>
-    </div>
-</div>
 
 <script>
     let selectedCell = null;
@@ -715,19 +626,7 @@
             }
         });
     }
-    function toggleVirtualKeyboard() {
-        const keyboard = document.getElementById('virtual-keyboard');
-        const grilleContainer = document.querySelector('.grille-container');
 
-        keyboard.classList.toggle('visible');
-
-        // Ajuster la marge en bas de la grille lorsque le clavier est visible
-        if (keyboard.classList.contains('visible')) {
-            grilleContainer.style.marginBottom = '200px'; // Ajustez cette valeur selon vos besoins
-        } else {
-            grilleContainer.style.marginBottom = '20px'; // Rétablir la marge par défaut
-        }
-    }
 
     // Fonction pour insérer une lettre dans la case sélectionnée
     function insertLetter(letter) {
