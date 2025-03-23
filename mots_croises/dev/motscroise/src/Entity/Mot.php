@@ -31,13 +31,11 @@ class Mot
     #[ORM\ManyToMany(targetEntity: CaseM::class, mappedBy: 'mots')]
     private Collection $cases;
 
-    #[ORM\OneToMany(targetEntity: Funfact::class, mappedBy: 'mot')]
-    private Collection $funfacts;
+
 
     public function __construct()
     {
         $this->cases = new ArrayCollection();
-        $this->funfacts = new ArrayCollection();
     }
 
     public function getCases(): Collection

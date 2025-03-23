@@ -34,34 +34,6 @@
             margin-bottom: 50px;
             margin-top: 50px;
         }
-        video {
-            width: 80%;
-            max-width: 300px;
-            height: auto;
-        }
-
-        .definition-label {
-            text-align: left;
-            width: 100%;
-            margin-top: 20px;
-            margin-bottom: 0;
-            max-width: 400px;
-            font-size: 16px;
-        }
-
-        .definition-container {
-            text-align: left;
-            width: 90%;
-            max-width: 400px;
-            margin-top: 0;
-            font-size: 14px;
-            line-height: 1.6;
-            word-wrap: break-word;
-            padding: 0;
-        }
-        .definition-container p {
-            white-space: pre-line;
-        }
 
         .grille-container {
             display: inline-block;
@@ -105,10 +77,6 @@
             background: none !important;
             border: none !important;
             box-shadow: none !important;
-        }
-
-        .blur {
-            filter: blur(5px);
         }
 
         .numero-externe {
@@ -204,19 +172,6 @@
                 font-size: 16px;
             }
 
-            .bubble {
-                font-size: 14px;
-                max-width: 100px;
-                padding: 8px;
-                top: -25px;
-                right: 5px;
-            }
-
-            .start-button {
-                font-size: 14px;
-                padding: 10px 15px;
-                max-width: 160px;
-            }
         }
 
         .timer {
@@ -275,10 +230,11 @@
         .score-update {
             animation: pop 0.3s ease-in-out;
         }
+
         .help-icon{
             position: fixed;
             bottom: 20px;
-            left: 0;
+            left: 10px;
             font-size: 24px;
             color: #007bff;
             cursor: pointer;
@@ -292,39 +248,9 @@
             margin-bottom: 20px; /* Marge par défaut */
         }
 
-
-
-
-        .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
-            font-size: 20px;
-            color: #007bff;
-            transition: color 0.2s ease-in-out;
-        }
-
-        .close-button:hover {
-            color: #0056b3;
-        }
-
-
-         .help-icon:hover, .joker-icon:hover {
-            background: #e3f2fd;
-        }
-
-        .help-icon {
-            left: 10px; /* Position à côté de l'icône du clavier */
-        }
-
-
-
          .help-icon:hover {
             background: #e3f2fd;
         }
-
-        
 
         /* Style pour le conteneur de la définition */
         .help-definition {
@@ -400,6 +326,7 @@
                 transform: scale(1);
             }
         }
+
         /* Fond semi-transparent */
         .game-over-overlay {
             position: fixed;
@@ -484,14 +411,6 @@
             }
         }
 
-        @keyframes pulse {
-            from {
-                text-shadow: 0px 0px 10px red;
-            }
-            to {
-                text-shadow: 0px 0px 20px red;
-            }
-        }
         .message {
             position: fixed;
             top: 50%;
@@ -539,7 +458,7 @@
     </style>
 </head>
 <body>
-<div class="main-wrapper">
+
 <div class="container">
     <div class="timer">
         Temps restant : <span id="time">05:30</span>
@@ -551,7 +470,6 @@
     <div class="grille-wrapper">
         <div class="grille-container">
             <table>
-
                 {% for x in 1..10 %}
                     <tr>
                         {% for y in 1..14 %}
@@ -590,12 +508,9 @@
     </div>
 </div>
 
-</div>
-
-<div class="help-icon" onclick="toggleHelp()">
+<div class="help-icon" onclick="toggetHelp()">
     🃏
 </div>
-
 
 <script>
     let selectedCell = null;
@@ -603,15 +518,14 @@
     let currentCells = []; // Stocke toutes les cases du mot sélectionné
     let currentIndex = 0; // Index de la case actuellement sélectionnée dans le mot
     let timer;
-    let timeLeft = 330; // 5 minutes en secondes
+    let timeLeft = 330; // 5 minutes en secondes et 30 secondes
     let score = 0; // Variable pour suivre le score
+
     // Fonction pour basculer l'affichage de l'aide
-    function toggleHelp() {
+    function toggetHelp() {
         const helpDefinition = document.getElementById('help-definition');
         helpDefinition.classList.toggle('hidden');
     }
-
-
 
 
     // Fonction pour mettre à jour les cases partagées
@@ -639,7 +553,6 @@
 
             // Passer à la case suivante
             currentIndex++;
-
 
             if (currentIndex < currentCells.length) {
                 selectedCell = currentCells[currentIndex];
@@ -688,15 +601,11 @@
     }
 
     function restartGame() {
-        score = 0;
-        document.getElementById('score').textContent = score;
         window.location.reload();
     }
 
     function openDefinition(motId, definition, event) {
         event.stopPropagation();
-
-        console.log("Mot sélectionné :", motId);
 
         // Réinitialiser la sélection actuelle
         resetSelection();
@@ -716,13 +625,9 @@
         currentCells = [];
         const selectedCells = document.querySelectorAll(`td[data-mot-id*="${motId}"]`);
 
-        console.log("Cases sélectionnées :", selectedCells);
-        console.log("Cases trouvées :", selectedCells.length);
-
         selectedCells.forEach(cell => {
             const motsPartages = cell.getAttribute('data-mot-id').split(' '); // Séparer les IDs des mots
             if (motsPartages.includes(motId.toString())) {
-                console.log("Case ajoutée - X:", cell.getAttribute('data-x'), "Y:", cell.getAttribute('data-y'));
                 currentCells.push(cell);
             }
         });
@@ -735,7 +640,6 @@
 
         // Appliquer la classe CSS pour mettre en avant les cases
         currentCells.forEach(cell => {
-            console.log("Ajout de la classe 'mot-selectionne' à :", cell);
             cell.classList.add('mot-selectionne');
         });
 
@@ -744,16 +648,10 @@
 
         if (currentCells[currentIndex]) {
             selectedCell = currentCells[currentIndex];
-            console.log("Ordre des cases sélectionnées :", currentCells);
-            console.log("Toutes les cases du DOM avec Y=8 :", document.querySelectorAll('[data-y="8"]'));
-            console.log("Case (3,8) :", document.querySelector('[data-x="3"][data-y="8"]'));
-
             selectedCell.classList.add('case-selectionnee');
             selectedCell.focus(); // Activer pour taper directement
-            console.log("Première case activée :", selectedCell);
         }
     }
-
 
     document.addEventListener('keydown', (e) => {
         if (selectedCell) {
@@ -802,8 +700,6 @@
             .querySelector('.case-contenu')
             .dataset.lettres.trim() // Supprimer les espaces
             .toUpperCase();
-        console.log("Mot saisi :", userWord);
-        console.log("Mot correct :", correctWord);
 
         if (userWord === correctWord) {
             showMessage(' ✅ correct!', 'congratulations');
@@ -819,6 +715,7 @@
             setTimeout(() => {
                 scoreElement.classList.remove('score-update');
             }, 330);
+
             if (score === 8) {
                 const congratulationsButton = document.getElementById('congratulations-button');
                 congratulationsButton.classList.remove('hidden');
@@ -839,7 +736,7 @@
 
         document.body.appendChild(message);
 
-        // Supprimer le message après 1 seconde
+        // Supprimer le message après 2 seconde
         setTimeout(() => {
             message.remove();
         }, 2000);

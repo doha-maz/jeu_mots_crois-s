@@ -27,7 +27,7 @@ class AppFixtures extends Fixture
         // Tableau pour stocker les cases partagées
         $casesPartagees = [];
 
-// Créer les mots et leurs cases
+        // Créer les mots et leurs cases
         foreach ($mots as $index => $data) {
             $mot = new Mot();
             $mot->setMot($data['mot']);
